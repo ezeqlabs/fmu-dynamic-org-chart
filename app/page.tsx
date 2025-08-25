@@ -64,6 +64,7 @@ export default function Home() {
   const [displayData, setDisplayData] = useState<any[] | null>(null);
   const [directorates, setDirectorates] = useState<string[]>([]);
   const [activeFilter, setActiveFilter] = useState('Geral');
+  const [isFilterEnabled, setIsFilterEnabled] = useState(false); 
   const [selectedNode, setSelectedNode] = useState<any | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -100,9 +101,15 @@ export default function Home() {
         });
 
         const uniqueDirectorates = [...new Set(
-            mergedData.map(emp => emp[columnMapping.directorateKey]).filter(Boolean)
+            mergedData
+                .map(emp => emp[columnMapping.directorateKey])
+                .filter(Boolean)
         )];
-        setDirectorates(uniqueDirectorates.sort());
+        
+        if (uniqueDirectorates.length > 0) {
+          setDirectorates(uniqueDirectorates.sort());
+          setIsFilterEnabled(true);
+        }
 
         setFullData(mergedData);
         setDisplayData(mergedData);
@@ -165,11 +172,13 @@ export default function Home() {
       </header>
       
       <div className="main-container">
-        <FilterSidebar 
-          directorates={directorates}
-          activeFilter={activeFilter}
-          onFilterChange={handleFilterChange}
-        />
+        {isFilterEnabled && (
+          <FilterSidebar 
+            directorates={directorates}
+            activeFilter={activeFilter}
+            onFilterChange={handleFilterChange}
+          />
+        )}
         <div className="chart-area">
           <OrganizationalChart 
             data={displayData} 
