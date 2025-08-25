@@ -1,10 +1,10 @@
-"use client"; // Diretiva essencial para indicar que este é um Componente de Cliente (roda no navegador)
+/* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
 
 import React, { useState, useEffect } from 'react';
 import * as XLSX from 'xlsx';
-import './globals.css'; // Importa os estilos globais
+import './globals.css';
 
-// Importando nossos componentes e utilitários com os novos caminhos
 import OrganizationalChart from '../components/OrgChart';
 import InfoCard from '../components/InfoCard';
 import FilterSidebar from '../components/FilterSidebar';
@@ -59,9 +59,7 @@ const getSubtree = (allPeople: any[], rootId: any): any[] => {
     return subtree;
 }
 
-// A página principal da nossa aplicação
 export default function Home() {
-  // --- Gerenciamento de Estado ---
   const [fullData, setFullData] = useState<any[] | null>(null);
   const [displayData, setDisplayData] = useState<any[] | null>(null);
   const [directorates, setDirectorates] = useState<string[]>([]);
@@ -69,25 +67,19 @@ export default function Home() {
   const [selectedNode, setSelectedNode] = useState<any | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // --- Efeito para Carregamento e Processamento Inicial dos Dados ---
   useEffect(() => {
     const processData = async () => {
       try {
-        // 1. Busca as URLs das planilhas mais recentes da nossa nova API
         const urlsResponse = await fetch('/api/data-urls');
         const { orgDataUrl, gradesDataUrl } = await urlsResponse.json();
 
-        // Se as URLs não estiverem definidas (primeiro acesso), usa os arquivos locais como fallback
         const orgPath = orgDataUrl || '/data/organograma-dados.xlsx';
         const gradesPath = gradesDataUrl || '/data/grades-info.xlsx';
 
-        // 2. Carrega os dados a partir das URLs obtidas
-        let [organogramData, gradesData] = await Promise.all([
+        const [organogramData, gradesData] = await Promise.all([
             loadExcelFile(orgPath),
             loadExcelFile(gradesPath)
         ]);
-        
-        // ... (o resto da lógica de merge, cálculo e set state continua exatamente a mesma)
         
       } catch (err: any) {
         console.error("Erro ao processar dados:", err);

@@ -3,9 +3,9 @@ import { cookies } from 'next/headers';
 
 export async function GET() {
   try {
-    // Remove o cookie de autenticação
-    cookies().delete('auth_token');
-    return NextResponse.json({ success: true, message: 'Logout bem-sucedido' });
+    const response = NextResponse.json({ success: true, message: 'Logout bem-sucedido' });
+    response.cookies.delete('auth_token');
+    return response;
   } catch (error) {
     return NextResponse.json({ success: false, message: 'Erro ao fazer logout' }, { status: 500 });
   }
