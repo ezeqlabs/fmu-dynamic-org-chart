@@ -76,10 +76,36 @@ export default function Home() {
         const orgPath = orgDataUrl || '/data/organograma-dados.xlsx';
         const gradesPath = gradesDataUrl || '/data/grades-info.xlsx';
 
-        const [organogramData, gradesData] = await Promise.all([
+        // eslint-disable-next-line prefer-const
+        let [organogramData, gradesData] = await Promise.all([
             loadExcelFile(orgPath),
             loadExcelFile(gradesPath)
         ]);
+
+        organogramData = organogramData.filter(row => row[columnMapping.idKey]);
+
+        const gradesMap = new Map();
+        gradesData.forEach(gradeInfo => gradesMap.set(gradeInfo[columnMapping.gradeKey], gradeInfo));
+
+        const mergedData = organogramData.map(employee => {
+            const gradeInfo = gradesMap.get(employee[columnMapping.gradeKey]);
+            const employeeComplet = gradeInfo ? { ...employee, ...gradeInfo } : { ...employee };
+            const percentual = calcularPercentualFaixa(
+                employeeComplet[columnMapping.salaryKey],
+                employeeComplet[columnMapping.salaryFloorKey],
+                employeeComplet[columnMapping.salaryCeilingKey]
+            );
+            employeeComplet[columnMapping.calculatedKey] = percentual;
+            return employeeComplet;
+        });
+
+        const uniqueDirectorates = [...new Set(
+            mergedData.map(emp => emp[columnMapping.directorateKey]).filter(Boolean)
+        )];
+        setDirectorates(uniqueDirectorates.sort());
+
+        setFullData(mergedData);
+        setDisplayData(mergedData);
         
       } catch (err: any) {
         console.error("Erro ao processar dados:", err);
