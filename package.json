@@ -9,17 +9,26 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@types/jsonwebtoken": "^9.0.10",
+    "@vercel/blob": "^1.1.1",
+    "@vercel/kv": "^3.0.0",
+    "d3": "^7.9.0",
+    "d3-org-chart": "^3.1.1",
+    "ioredis": "^5.7.0",
+    "jose": "^6.0.13",
+    "jsonwebtoken": "^9.0.2",
+    "next": "15.5.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "next": "15.5.0"
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@eslint/eslintrc": "^3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.5.0",
-    "@eslint/eslintrc": "^3"
+    "typescript": "^5"
   }
 }
