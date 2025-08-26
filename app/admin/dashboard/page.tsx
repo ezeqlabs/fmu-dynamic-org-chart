@@ -47,7 +47,7 @@ export default function DashboardPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!orgFile || !gradesFile) {
+    if (!orgFile && !gradesFile) {
       setMessage({ type: 'error', text: 'Por favor, selecione os dois arquivos.' });
       return;
     }
@@ -55,8 +55,12 @@ export default function DashboardPage() {
     setMessage(null);
 
     const formData = new FormData();
-    formData.append('organogramData', orgFile);
-    formData.append('gradesData', gradesFile);
+    if(orgFile) {
+      formData.append('organogramData', orgFile);
+    }
+    if(gradesFile) {
+      formData.append('gradesData', gradesFile);
+    }
 
     try {
       const response = await fetch('/api/upload', {
