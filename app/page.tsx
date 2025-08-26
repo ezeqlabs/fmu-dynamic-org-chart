@@ -168,7 +168,7 @@ export default function Home() {
       <InfoCard nodeData={selectedNode} onClose={handleCloseCard} mapping={columnMapping} />
       
       <header className="App-header">
-        <h1>POC - Organograma a partir de Excel</h1>
+        <h1>BETA - Organograma FMU</h1>
       </header>
       
       <div className="main-container">

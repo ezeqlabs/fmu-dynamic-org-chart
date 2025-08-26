@@ -8,7 +8,6 @@ import redis from '@/lib/redis';
 const SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
-  // 1. Verificar Autenticação (essencial!)
   const token = request.cookies.get('auth_token')?.value;
   if (!token || !SECRET_KEY) {
     return NextResponse.json({ message: 'Não autorizado' }, { status: 401 });
@@ -29,14 +28,25 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ message: 'Arquivos ausentes' }, { status: 400 });
   }
 
+  const MAX_FILE_SIZE_MB = 4.5;
+  if (organogramFile.size > MAX_FILE_SIZE_MB * 1024 * 1024 || gradesFile.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+      return NextResponse.json({ message: `Um dos arquivos excede o limite de ${MAX_FILE_SIZE_MB} MB.` }, { status: 413 });
+  }
+
   try {
-    // 3. Fazer o upload dos arquivos para o Vercel Blob
     const [orgBlob, gradesBlob] = await Promise.all([
-      put(`organograma-dados.xlsx`, organogramFile, { access: 'public', addRandomSuffix: false }),
-      put(`grades-info.xlsx`, gradesFile, { access: 'public', addRandomSuffix: false })
+      put(`organograma-dados.xlsx`, organogramFile, {
+        access: 'public', 
+        addRandomSuffix: false, 
+        allowOverwrite: true
+      }),
+      put(`grades-info.xlsx`, gradesFile, {
+        access: 'public',
+        addRandomSuffix: false,
+        allowOverwrite: true
+      })
     ]);
 
-    // 4. Salvar as novas URLs no Vercel KV
     await Promise.all([
       redis.set('org_data_url', orgBlob.url),
       redis.set('grades_data_url', gradesBlob.url)
