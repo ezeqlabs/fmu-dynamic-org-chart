@@ -74,8 +74,12 @@ export default function Home() {
         const urlsResponse = await fetch('/api/data-urls');
         const { orgDataUrl, gradesDataUrl } = await urlsResponse.json();
 
-        const orgPath = orgDataUrl || '/data/organograma-dados.xlsx';
-        const gradesPath = gradesDataUrl || '/data/grades-info.xlsx';
+        let orgPath = orgDataUrl || '/data/organograma-dados.xlsx';
+        let gradesPath = gradesDataUrl || '/data/grades-info.xlsx';
+
+        const cacheBuster = `?t=${new Date().getTime()}`;
+        orgPath += cacheBuster;
+        gradesPath += cacheBuster;
 
         // eslint-disable-next-line prefer-const
         let [organogramData, gradesData] = await Promise.all([
