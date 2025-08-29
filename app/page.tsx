@@ -10,11 +10,12 @@ import InfoCard from '../components/InfoCard';
 import FilterSidebar from '../components/FilterSidebar';
 import { columnMapping } from '../config/mappings';
 import { calcularPercentualFaixa } from '../utils/calculations';
+import { Employee } from '@/types';
 
 /**
  * Função auxiliar para carregar e processar um arquivo Excel.
  */
-const loadExcelFile = async (filePath: string): Promise<any[]> => {
+const loadExcelFile = async (filePath: string): Promise<Employee[]> => {
   const response = await fetch(filePath);
   if (!response.ok) throw new Error(`Não foi possível encontrar o arquivo: ${filePath}`);
   const arrayBuffer = await response.arrayBuffer();
@@ -27,8 +28,8 @@ const loadExcelFile = async (filePath: string): Promise<any[]> => {
 /**
  * Função auxiliar para obter a sub-árvore completa de um funcionário (toda sua equipe).
  */
-const getSubtree = (allPeople: any[], rootId: any): any[] => {
-    const subtree: any[] = [];
+const getSubtree = (allPeople: Employee[], rootId: any): Employee[] => {
+    const subtree: Employee[] = [];
     const queue = [rootId];
     const visited = new Set([rootId]);
     const peopleMap = new Map(allPeople.map(p => [p[columnMapping.idKey], p]));
@@ -60,12 +61,12 @@ const getSubtree = (allPeople: any[], rootId: any): any[] => {
 }
 
 export default function Home() {
-  const [fullData, setFullData] = useState<any[] | null>(null);
-  const [displayData, setDisplayData] = useState<any[] | null>(null);
+  const [fullData, setFullData] = useState<Employee[] | null>(null);
+  const [displayData, setDisplayData] = useState<Employee[] | null>(null);
   const [directorates, setDirectorates] = useState<string[]>([]);
   const [activeFilter, setActiveFilter] = useState('Geral');
   const [isFilterEnabled, setIsFilterEnabled] = useState(false); 
-  const [selectedNode, setSelectedNode] = useState<any | null>(null);
+  const [selectedNode, setSelectedNode] = useState<Employee | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -161,7 +162,7 @@ export default function Home() {
     setSelectedNode(null); 
     setActiveFilter(filter);
   };
-  const handleNodeClick = (nodeData: any) => setSelectedNode(nodeData);
+  const handleNodeClick = (nodeData: Employee) => setSelectedNode(nodeData);
   const handleCloseCard = () => setSelectedNode(null);
 
   if (error) return <div className="App-error">Erro ao carregar os dados: {error}</div>;
